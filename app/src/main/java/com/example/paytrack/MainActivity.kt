@@ -3,48 +3,27 @@ package com.example.paytrack
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
-import com.example.paytrack.data.Account
-import com.example.paytrack.data.AppDatabase
-import com.example.paytrack.ui.theme.PayTrackTheme
-import kotlinx.coroutines.launch
-import androidx.compose.foundation.layout.padding
-import kotlinx.coroutines.flow.first
+import com.example.paytrack.data.local.AccountDatabase
+import com.example.paytrack.data.repository.AccountRepository
+import com.example.paytrack.ui.navigation.AppNavGraph
+import com.example.paytrack.ui.viewmodel.AccountViewModel
+
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // ✅ database
+        val database = AccountDatabase.getDatabase(this)
+        val dao = database.accountDao()
 
-        val db = AppDatabase.getDatabase(applicationContext)
-        val dao = db.accountDao()
+        // ✅ repository
+        val repository = AccountRepository(dao)
 
-        lifecycleScope.launch {
-            val accounts = dao.getAllAccounts().first()
-            if (accounts.isEmpty()) {
-                dao.insertAccount(Account(name = "Main Wallet", balance = 500.0))
-                dao.insertAccount(Account(name = "Bank Card", balance = 1200.0))
-            }
-            dao.getAllAccounts().collect { accounts ->
-                accounts.forEach {
-                    android.util.Log.d("PayTrack", "Account: id=${it.id}, name=${it.name}, balance=${it.balance}")
-                }
-            }
-        }
+        // ✅ viewmodel
+        val viewModel = AccountViewModel(repository)
 
         setContent {
-            PayTrackTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Text(
-                        text = "PayTrack",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            AppNavGraph(viewModel)
         }
     }
 }

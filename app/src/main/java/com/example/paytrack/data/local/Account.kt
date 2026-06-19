@@ -1,4 +1,4 @@
-package com.example.paytrack.data
+package com.example.paytrack.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
