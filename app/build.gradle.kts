@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.animation:animation")
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 

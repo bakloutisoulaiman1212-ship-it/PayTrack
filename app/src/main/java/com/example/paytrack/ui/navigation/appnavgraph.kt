@@ -14,6 +14,8 @@ import com.example.paytrack.ui.screens.account.AddAccountScreen
 import com.example.paytrack.ui.screens.account.EditAccountScreen
 import com.example.paytrack.ui.screens.dashboard.DashboardScreen
 import com.example.paytrack.ui.viewmodel.AccountViewModel
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 
 @Composable
 fun AppNavGraph(viewModel: AccountViewModel) {
@@ -22,7 +24,31 @@ fun AppNavGraph(viewModel: AccountViewModel) {
 
     NavHost(
         navController = navController,
-        startDestination = "splash"
+        startDestination = "splash",
+        enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { it },
+                animationSpec = tween(300)
+            )
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { -it },
+                animationSpec = tween(300)
+            )
+        },
+        popEnterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { -it },
+                animationSpec = tween(300)
+            )
+        },
+        popExitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { it },
+                animationSpec = tween(300)
+            )
+        }
     ) {
         composable("splash") { SplashScreen(navController) }
         composable("login") { LoginScreen(navController) }
