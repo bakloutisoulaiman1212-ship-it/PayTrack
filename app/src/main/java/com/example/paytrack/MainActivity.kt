@@ -7,6 +7,8 @@ import com.example.paytrack.data.local.AccountDatabase
 import com.example.paytrack.data.repository.AccountRepository
 import com.example.paytrack.ui.navigation.AppNavGraph
 import com.example.paytrack.ui.viewmodel.AccountViewModel
+import com.example.paytrack.ui.theme.PayTrackTheme
+import com.example.paytrack.ui.navigation.AppNavGraph
 
 class MainActivity : ComponentActivity() {
 
@@ -23,7 +25,10 @@ class MainActivity : ComponentActivity() {
         val viewModel = AccountViewModel(repository)
 
         setContent {
-            AppNavGraph(viewModel)
+            PayTrackTheme {
+                AppNavGraph(viewModel)
+            }
         }
+
     }
 }
