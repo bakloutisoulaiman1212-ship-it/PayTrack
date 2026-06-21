@@ -16,15 +16,23 @@ import com.example.paytrack.ui.screens.dashboard.DashboardScreen
 import com.example.paytrack.ui.viewmodel.AccountViewModel
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import com.example.paytrack.ui.viewmodel.UserViewModel
+import com.example.paytrack.ui.screens.ProfileScreen
 
 @Composable
-fun AppNavGraph(viewModel: AccountViewModel) {
+fun AppNavGraph(
+    accountViewModel: AccountViewModel,
+    userViewModel: UserViewModel,
+    isDarkMode: Boolean,
+    onToggleTheme: (Boolean) -> Unit
+) {
 
     val navController = rememberNavController()
 
+    val startDestination = "splash"
     NavHost(
         navController = navController,
-        startDestination = "splash",
+        startDestination = startDestination,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { it },
@@ -51,17 +59,32 @@ fun AppNavGraph(viewModel: AccountViewModel) {
         }
     ) {
         composable("splash") { SplashScreen(navController) }
-        composable("login") { LoginScreen(navController) }
-        composable("signup") {
-            SignUpScreen(navController)
+
+        composable("login") {
+            LoginScreen(navController, userViewModel)
         }
-        composable("home") {
-            HomeScreen(navController)
+
+        composable("signup") {
+            SignUpScreen(navController, userViewModel)
+
+        }
+        composable("profile") {
+            ProfileScreen(
+                navController = navController,
+                userViewModel = userViewModel,
+                isDarkMode = isDarkMode,
+                onToggleTheme = onToggleTheme
+            )
+        }
+
+        composable("home/{username}") { backStackEntry ->
+            val username = backStackEntry.arguments?.getString("username") ?: ""
+            HomeScreen(navController, username)
         }
         // ✅ LIST
         composable("list") {
             AccountListScreen(
-                viewModel,
+                accountViewModel,
                 onAddClick = { navController.navigate("add") },
                 onAccountClick = { account ->
                     navController.navigate("edit/${account.id}")
@@ -74,7 +97,7 @@ fun AppNavGraph(viewModel: AccountViewModel) {
 
         // ✅ ADD
         composable(route = "add") {
-            AddAccountScreen(viewModel, navController)
+            AddAccountScreen(accountViewModel, navController)
         }
 
         // ✅ EDIT
@@ -83,11 +106,19 @@ fun AppNavGraph(viewModel: AccountViewModel) {
             val id = backStackEntry.arguments?.getString("accountId")?.toLong()
 
             if (id != null) {
-                EditAccountScreen(viewModel, id, navController)
+                EditAccountScreen(accountViewModel, id, navController)
             }
         }
         composable("dashboard") {
-            DashboardScreen(viewModel, navController)
+            DashboardScreen(accountViewModel, navController)
+        }
+        composable("profil") {
+            ProfileScreen(
+                navController = navController,
+                userViewModel = userViewModel,
+                isDarkMode = isDarkMode,
+                onToggleTheme = onToggleTheme as (Boolean) -> Unit
+            )
         }
     }
 }

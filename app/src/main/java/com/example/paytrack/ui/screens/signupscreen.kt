@@ -1,205 +1,237 @@
 package com.example.paytrack.ui.screens
 
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.paytrack.ui.viewmodel.UserViewModel
 
 @Composable
-fun SignUpScreen(navController: NavController) {
+fun SignUpScreen(navController: NavController,
+                 userViewModel: UserViewModel
+) {
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
     var passwordVisible by remember { mutableStateOf(false) }
-    var confirmVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
-    var visible by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    var showSnackbar by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        visible = true
-    }
+    val primaryBlue = Color(0xFF3B82F6)
+    val background = Color(0xFFF8FAFC)
 
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn() + slideInVertically()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(background)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+        // ✅ ICON
+        Icon(
+            imageVector = Icons.Default.Person,
+            contentDescription = null,
+            modifier = Modifier.size(60.dp),
+            tint = primaryBlue
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // ✅ TITLE
+        Text(
+            text = "Sign Up",
+            style = MaterialTheme.typography.headlineMedium,
+            color = Color.Black
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // ✅ CARD
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(Color.White),
+            elevation = CardDefaults.cardElevation(6.dp)
         ) {
+            Column(modifier = Modifier.padding(16.dp)) {
 
-            val scale by animateFloatAsState(
-                targetValue = if (visible) 1f else 0.5f
-            )
+                // ✅ USERNAME
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = { username = it },
+                    label = { Text("Username") },
 
-            Icon(
-                imageVector = Icons.Default.PersonAdd,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(50.dp)
-                    .scale(scale),
-                tint = MaterialTheme.colorScheme.primary
-            )
+                    leadingIcon = {
+                        Icon(Icons.Default.Person, null, tint = primaryBlue)
+                    },
 
-            Spacer(modifier = Modifier.height(8.dp))
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = primaryBlue,
+                        focusedBorderColor = primaryBlue,
+                        unfocusedBorderColor = Color.Gray
+                    ),
 
-            Text("Sign Up", style = MaterialTheme.typography.headlineMedium)
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(8.dp)
-            ) {
+                // ✅ PASSWORD
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password") },
 
-                Column(modifier = Modifier.padding(16.dp)) {
+                    visualTransformation =
+                        if (passwordVisible) VisualTransformation.None
+                        else PasswordVisualTransformation(),
 
-                    // ✅ Username
-                    OutlinedTextField(
-                        value = username,
-                        onValueChange = { username = it },
-                        label = { Text("Username") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Person, null)
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    leadingIcon = {
+                        Icon(Icons.Default.Lock, null, tint = primaryBlue)
+                    },
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            passwordVisible = !passwordVisible
+                        }) {
+                            Icon(
+                                if (passwordVisible)
+                                    Icons.Default.Visibility
+                                else
+                                    Icons.Default.VisibilityOff,
+                                contentDescription = null
+                            )
+                        }
+                    },
 
-                    // ✅ Password
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
-                        label = { Text("Password") },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = primaryBlue,
+                        focusedBorderColor = primaryBlue,
+                        unfocusedBorderColor = Color.Gray
+                    ),
 
-                        visualTransformation =
-                            if (passwordVisible) VisualTransformation.None
-                            else PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                        leadingIcon = {
-                            Icon(Icons.Default.Lock, null)
-                        },
+                Spacer(modifier = Modifier.height(12.dp))
 
-                        trailingIcon = {
-                            IconButton(onClick = {
-                                passwordVisible = !passwordVisible
-                            }) {
-                                Icon(
-                                    if (passwordVisible)
-                                        Icons.Default.Visibility
-                                    else
-                                        Icons.Default.VisibilityOff,
-                                    null
-                                )
-                            }
-                        },
+                // ✅ CONFIRM PASSWORD
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    label = { Text("Confirm Password") },
 
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    visualTransformation =
+                        if (confirmPasswordVisible) VisualTransformation.None
+                        else PasswordVisualTransformation(),
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    leadingIcon = {
+                        Icon(Icons.Default.Lock, null, tint = primaryBlue)
+                    },
 
-                    // ✅ Confirm Password
-                    OutlinedTextField(
-                        value = confirmPassword,
-                        onValueChange = { confirmPassword = it },
-                        label = { Text("Confirm Password") },
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            confirmPasswordVisible = !confirmPasswordVisible
+                        }) {
+                            Icon(
+                                if (confirmPasswordVisible)
+                                    Icons.Default.Visibility
+                                else
+                                    Icons.Default.VisibilityOff,
+                                contentDescription = null
+                            )
+                        }
+                    },
 
-                        visualTransformation =
-                            if (confirmVisible) VisualTransformation.None
-                            else PasswordVisualTransformation(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = primaryBlue,
+                        focusedBorderColor = primaryBlue,
+                        unfocusedBorderColor = Color.Gray
+                    ),
 
-                        leadingIcon = {
-                            Icon(Icons.Default.Lock, null)
-                        },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
 
-                        trailingIcon = {
-                            IconButton(onClick = {
-                                confirmVisible = !confirmVisible
-                            }) {
-                                Icon(
-                                    if (confirmVisible)
-                                        Icons.Default.Visibility
-                                    else
-                                        Icons.Default.VisibilityOff,
-                                    null
-                                )
-                            }
-                        },
+        Spacer(modifier = Modifier.height(20.dp))
 
-                        modifier = Modifier.fillMaxWidth()
-                    )
+        // ✅ BUTTON
+        Button(
+            onClick = {
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                if (username.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
+                    errorMessage = "Fill all fields ⚠️"
+                    showSnackbar = true
+                } else if (password != confirmPassword) {
+                    errorMessage = "Passwords do not match ⚠️"
+                    showSnackbar = true
+                } else {
 
-                    Button(
-                        onClick = {
-                            if (password == confirmPassword && username.isNotEmpty()) {
-                                navController.popBackStack()
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Create Account")
+                    userViewModel.register(username, password) { success ->
+                        if (success) {
+                            navController.navigate("login")
+                        } else {
+                            errorMessage = "User already exists ⚠️"
+                            showSnackbar = true
+                        }
                     }
+
                 }
             }
+        ) {
+            Text("Sign Up")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Already have an account?",
+            color = Color.Gray
+        )
 
-            Text("Already have an account?")
+        Text(
+            text = "Login",
+            color = primaryBlue,
+            modifier = Modifier.clickable {
+                navController.navigate("login")
+            }
+        )
+    }
 
-            Text(
-                "Login",
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable {
-                    navController.popBackStack()
-                }
-            )
+    // ✅ SNACKBAR
+    if (showSnackbar) {
+        Snackbar(
+            modifier = Modifier.padding(16.dp),
+            containerColor = Color.Black
+        ) {
+            Text(text = errorMessage, color = Color.White)
         }
     }
 }

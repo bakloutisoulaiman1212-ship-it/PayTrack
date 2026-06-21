@@ -1,11 +1,11 @@
-package com.example.paytrack.data.local
+package com.example.paytrack.data.localaccount
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Account::class], version = 1)
+@Database(entities = [Account::class], version = 2)
 abstract class AccountDatabase : RoomDatabase() {
 
     abstract fun accountDao(): AccountDao

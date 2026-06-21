@@ -1,4 +1,4 @@
-package com.example.paytrack.data.local
+package com.example.paytrack.data.localaccount
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AccountDao {
 
-    @Query("SELECT * FROM accounts")
+    @Query("SELECT * FROM account")
     fun getAllAccounts(): Flow<List<Account>>
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
@@ -22,4 +22,8 @@ interface AccountDao {
 
     @Delete
     suspend fun delete(account: Account)
+
+    @Query("SELECT * FROM account WHERE username = :username")
+    fun getAccountsByUser(username: String): Flow<List<Account>>
+
 }

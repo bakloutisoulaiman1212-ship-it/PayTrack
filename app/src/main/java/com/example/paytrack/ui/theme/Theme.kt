@@ -11,18 +11,14 @@ private val LightColors = lightColorScheme(
     onPrimary = Color.White,
 
     secondary = SecondaryBlue,
-    onSecondary = Color.Black,
 
-    tertiary = AccentGreen,
+    background = Color(0xFF0B1F3A), // ✅ DARK BLUE
+    surface = Color(0xFF0B1F3A),
 
-    background = LightBackground,
-    onBackground = TextPrimary,
+    onBackground = Color.White,
+    onSurface = Color.White,
 
-    surface = SurfaceColor,
-    onSurface = TextPrimary,
-
-    error = ErrorRed,
-    onError = Color.White
+    error = ErrorRed
 )
 
 
@@ -47,7 +43,7 @@ private val DarkColors = darkColorScheme(
 // ✅ Main Theme
 @Composable
 fun PayTrackTheme(
-    darkTheme: Boolean = false, // تنجم تبدلها true إذا تحب dark
+    darkTheme: Boolean = true,
     content: @Composable () -> Unit
 ) {
 

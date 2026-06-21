@@ -1,7 +1,8 @@
 package com.example.paytrack.data.repository
 
-import com.example.paytrack.data.local.Account
-import com.example.paytrack.data.local.AccountDao
+import com.example.paytrack.data.localaccount.Account
+import com.example.paytrack.data.localaccount.AccountDao
+import kotlinx.coroutines.flow.Flow
 
 class AccountRepository(private val dao: AccountDao) {
 
@@ -18,4 +19,8 @@ class AccountRepository(private val dao: AccountDao) {
     suspend fun deleteAccount(account: Account) {
         dao.delete(account)
     }
+    fun getAccountsByUser(username: String): Flow<List<Account>> {
+        return dao.getAccountsByUser(username)
+    }
+
 }
