@@ -164,5 +164,94 @@ fun HomeScreen(navController: NavController,username: String) {
                 )
             }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // ✅ TRANSFER CARD
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    navController.navigate("transfer")
+                },
+            colors = CardDefaults.cardColors(
+                containerColor = primaryBlue
+            ),
+            elevation = CardDefaults.cardElevation(6.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("🔁", fontSize = 22.sp)
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Text(
+                    text = "Transfer",
+                    color = Color.White,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // ✅ PAYMENT CARD
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    navController.navigate("payment")
+                },
+            colors = CardDefaults.cardColors(
+                containerColor = primaryBlue
+            ),
+            elevation = CardDefaults.cardElevation(6.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("💳", fontSize = 22.sp)
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Text(
+                    text = "Payment",
+                    color = Color.White,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // ✅ HISTORY CARD
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    navController.navigate("history")
+                },
+            colors = CardDefaults.cardColors(
+                containerColor = primaryBlue
+            ),
+            elevation = CardDefaults.cardElevation(6.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("📜", fontSize = 22.sp)
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Text(
+                    text = "History",
+                    color = Color.White,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
     }
 }

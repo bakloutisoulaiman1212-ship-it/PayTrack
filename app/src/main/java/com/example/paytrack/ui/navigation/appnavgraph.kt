@@ -18,14 +18,17 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import com.example.paytrack.ui.viewmodel.UserViewModel
 import com.example.paytrack.ui.screens.ProfileScreen
-
+import com.example.paytrack.ui.screens.transaction.HistoryScreen
+import com.example.paytrack.ui.screens.transaction.PaymentScreen
+import com.example.paytrack.ui.screens.transaction.TransferScreen
+import com.example.paytrack.ui.viewmodel.BudgetViewModel
+import com.example.paytrack.ui.viewmodel.TransactionViewModel
 @Composable
 fun AppNavGraph(
     accountViewModel: AccountViewModel,
     userViewModel: UserViewModel,
-    isDarkMode: Boolean,
-    onToggleTheme: (Boolean) -> Unit
-) {
+    budgetViewModel: BudgetViewModel,
+    transactionViewModel: TransactionViewModel ) {
 
     val navController = rememberNavController()
 
@@ -71,10 +74,7 @@ fun AppNavGraph(
         composable("profile") {
             ProfileScreen(
                 navController = navController,
-                userViewModel = userViewModel,
-                isDarkMode = isDarkMode,
-                onToggleTheme = onToggleTheme
-            )
+                userViewModel = userViewModel )
         }
 
         composable("home/{username}") { backStackEntry ->
@@ -110,15 +110,20 @@ fun AppNavGraph(
             }
         }
         composable("dashboard") {
-            DashboardScreen(accountViewModel, navController)
+            DashboardScreen(accountViewModel, transactionViewModel ,budgetViewModel, navController)
         }
-        composable("profil") {
-            ProfileScreen(
-                navController = navController,
-                userViewModel = userViewModel,
-                isDarkMode = isDarkMode,
-                onToggleTheme = onToggleTheme as (Boolean) -> Unit
-            )
+
+        composable("transfer") {
+            TransferScreen(accountViewModel , navController )
         }
+
+        composable("payment") {
+            PaymentScreen(accountViewModel , navController )
+        }
+
+        composable("history") {
+            HistoryScreen(transactionViewModel , accountViewModel ,navController)
+        }
+
     }
 }

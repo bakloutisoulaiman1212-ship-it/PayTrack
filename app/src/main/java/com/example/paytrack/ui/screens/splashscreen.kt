@@ -1,6 +1,5 @@
 package com.example.paytrack.ui.screens
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -69,7 +68,7 @@ fun SplashScreen(navController: NavController) {
             text = "SMART PAYMENT MANAGER",
             fontSize = 15.sp,
             letterSpacing = 2.sp,
-            color = Color(0xFF90CAF9), // ✅ Light Blue
+            color = Color(0xFF90CAF9),
             textAlign = TextAlign.Center
         )
     }

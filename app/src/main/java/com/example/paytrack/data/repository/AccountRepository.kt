@@ -22,5 +22,4 @@ class AccountRepository(private val dao: AccountDao) {
     fun getAccountsByUser(username: String): Flow<List<Account>> {
         return dao.getAccountsByUser(username)
     }
-
 }
