@@ -1,52 +1,43 @@
 package com.example.paytrack.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// ✅ Light Theme (اللي باش يستعملو التطبيق)
 private val LightColors = lightColorScheme(
-
     primary = LightBluePrimary,
     onPrimary = Color.White,
-
     secondary = SecondaryBlue,
 
-    background = Color(0xFF0B1F3A), // ✅ DARK BLUE
-    surface = Color(0xFF0B1F3A),
-
-    onBackground = Color.White,
-    onSurface = Color.White,
+    // ✅ Light = أبيض/فاتح
+    background = Color(0xFFF5F9FF),
+    surface = Color.White,
+    onBackground = Color(0xFF0D47A1),
+    onSurface = Color.Black,
 
     error = ErrorRed
 )
 
-
-// ✅ Dark Theme (اختياري 💡)
 private val DarkColors = darkColorScheme(
-
-    primary = LightBlueDark,
+    primary = LightBluePrimary,
     onPrimary = Color.White,
+    secondary = SecondaryBlue,
 
-    secondary = SecondaryDark,
-
-    background = Color(0xFF0A1A2F),
-    surface = Color(0xFF102840),
-
-    onBackground = Color.White,
+    // ✅ Dark = أزرق غامق
+    background = Color(0xFF0B1E2D),
+    surface = Color(0xFF102C3A),
+    onBackground = Color(0xFFD6E9FF),
     onSurface = Color.White,
 
     error = ErrorRed
 )
 
-
-// ✅ Main Theme
 @Composable
 fun PayTrackTheme(
-    darkTheme: Boolean = true,
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-
     val colors = if (darkTheme) DarkColors else LightColors
 
     MaterialTheme(

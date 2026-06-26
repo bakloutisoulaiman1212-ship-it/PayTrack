@@ -1,0 +1,185 @@
+package com.example.paytrack.utils
+
+
+import android.content.Context
+import android.content.Intent
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
+import android.os.Environment
+import androidx.core.content.FileProvider
+import com.example.paytrack.data.localtransaction.Transaction
+import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+
+object PdfExporter {
+
+    fun exportMonthlyTransactions(
+        context: Context,
+        transactions: List<Transaction>,
+        username: String
+    ) {
+
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val startOfMonth = calendar.timeInMillis
+        val monthlyTransactions = transactions.filter { it.date >= startOfMonth }
+
+        // ✅ إنشاء PDF
+        val document = PdfDocument()
+        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create() // A4
+        val page = document.startPage(pageInfo)
+        val canvas: Canvas = page.canvas
+
+        val paint = Paint().apply { isAntiAlias = true }
+        val blue = Color.parseColor("#3B82F6")
+        val black = Color.BLACK
+        val gray = Color.parseColor("#666666")
+        val white = Color.WHITE
+
+        var y = 60f
+
+        // ✅ Header Background
+        paint.color = blue
+        canvas.drawRect(0f, 0f, 595f, 100f, paint)
+
+        // ✅ Title
+        paint.color = white
+        paint.textSize = 22f
+        paint.isFakeBoldText = true
+        canvas.drawText("PayTrack — Monthly Report", 30f, 45f, paint)
+
+        // ✅ Subtitle
+        paint.textSize = 13f
+        paint.isFakeBoldText = false
+        val month = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(Date())
+        canvas.drawText("User: $username  |  Month: $month", 30f, 75f, paint)
+
+        y = 130f
+
+        // ✅ Summary
+        val totalSpent = monthlyTransactions
+            .filter { it.type == "PAYMENT" }
+            .sumOf { it.amount }
+
+        val totalTransferOut = monthlyTransactions
+            .filter { it.type == "TRANSFER_OUT" }
+            .sumOf { it.amount }
+
+        paint.color = black
+        paint.textSize = 13f
+        paint.isFakeBoldText = true
+        canvas.drawText("Summary", 30f, y, paint)
+        y += 20f
+
+        paint.isFakeBoldText = false
+        paint.color = gray
+        paint.textSize = 11f
+        canvas.drawText("Total Transactions: ${monthlyTransactions.size}", 30f, y, paint)
+        y += 18f
+        canvas.drawText("Total Payments: ${String.format("%.2f", totalSpent)} DT", 30f, y, paint)
+        y += 18f
+        canvas.drawText("Total Transfers Out: ${String.format("%.2f", totalTransferOut)} DT", 30f, y, paint)
+        y += 30f
+
+        // ✅ Divider
+        paint.color = blue
+        canvas.drawLine(30f, y, 565f, y, paint)
+        y += 20f
+
+        // ✅ Table Header
+        paint.color = blue
+        paint.textSize = 11f
+        paint.isFakeBoldText = true
+        canvas.drawText("Type", 30f, y, paint)
+        canvas.drawText("Amount", 180f, y, paint)
+        canvas.drawText("Details", 300f, y, paint)
+        canvas.drawText("Date", 440f, y, paint)
+        y += 8f
+
+        paint.color = blue
+        canvas.drawLine(30f, y, 565f, y, paint)
+        y += 18f
+
+        // ✅ Transactions
+        paint.isFakeBoldText = false
+        paint.textSize = 10f
+
+        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+
+        monthlyTransactions.forEach { txn ->
+            if (y > 800f) return@forEach // ما نتعدوش الصفحة
+
+            paint.color = when (txn.type) {
+                "PAYMENT" -> Color.parseColor("#4CAF50")
+                "TRANSFER_OUT" -> Color.RED
+                "TRANSFER_IN" -> blue
+                "VOID" -> gray
+                else -> black
+            }
+            canvas.drawText(txn.type, 30f, y, paint)
+
+            paint.color = black
+            canvas.drawText("${String.format("%.2f", txn.amount)} DT", 180f, y, paint)
+
+            paint.color = gray
+            val details = when (txn.type) {
+                "TRANSFER_OUT" -> "To: ${txn.toAccountName ?: "-"}"
+                "TRANSFER_IN" -> "From: ${txn.fromAccountName ?: "-"}"
+                "PAYMENT" -> "Payment"
+                "VOID" -> "Canceled"
+                else -> "-"
+            }
+            canvas.drawText(details, 300f, y, paint)
+            canvas.drawText(sdf.format(Date(txn.date)), 440f, y, paint)
+
+            y += 22f
+
+            // ✅ divider خفيف
+            paint.color = Color.parseColor("#EEEEEE")
+            canvas.drawLine(30f, y - 8f, 565f, y - 8f, paint)
+        }
+
+        // ✅ Footer
+        paint.color = gray
+        paint.textSize = 9f
+        canvas.drawText(
+            "Generated by PayTrack — ${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())}",
+            30f, 820f, paint
+        )
+
+        document.finishPage(page)
+
+        // ✅ حفظ الملف
+        val fileName = "PayTrack_${SimpleDateFormat("MMM_yyyy", Locale.getDefault()).format(Date())}.pdf"
+        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
+
+        document.writeTo(FileOutputStream(file))
+        document.close()
+
+        // ✅ فتح الـ PDF
+        val uri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.provider",
+            file
+        )
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/pdf")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        }
+
+        context.startActivity(Intent.createChooser(intent, "Open PDF"))
+    }
+}

@@ -1,27 +1,18 @@
 package com.example.paytrack.ui.screens
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,228 +21,217 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.paytrack.data.localuser.SessionManager
-
+import com.example.paytrack.ui.viewmodel.NotificationViewModel
 
 @Composable
-fun HomeScreen(navController: NavController,username: String) {
-
-    val primaryBlue = Color(0xFF3B82F6)
-    val background = Color(0xFFF8FAFC)
+fun HomeScreen(
+    navController: NavController,
+    username: String,
+    notificationViewModel: NotificationViewModel,
+    darkMode: Boolean,
+    onToggleDarkMode: (Boolean) -> Unit
+) {
     val context = LocalContext.current
     val session = SessionManager(context)
+    val unreadCount by notificationViewModel.unreadCount.collectAsState(initial = 0)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
-
         // ✅ TOP BAR
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Column {
                 Text(
-                    text = "\uD83D\uDC4B Welcome",
+                    text = "👋 Welcome",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onBackground
                 )
-
                 Text(
                     text = username,
                     style = MaterialTheme.typography.headlineSmall,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                ThemeToggleSwitch(darkMode = darkMode, onToggle = onToggleDarkMode)
 
-                // ✅ Profile Icon
-                IconButton(onClick = {
-                    navController.navigate("profile")
-                }) {
+                BadgedBox(
+                    badge = {
+                        if (unreadCount > 0) {
+                            Badge { Text("$unreadCount") }
+                        }
+                    }
+                ) {
+                    IconButton(onClick = { navController.navigate("notifications") }) {
+                        Icon(
+                            Icons.Default.Notifications,
+                            contentDescription = "Notifications",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+
+                IconButton(onClick = { navController.navigate("profile") }) {
                     Icon(
                         imageVector = Icons.Default.Person,
-                        contentDescription = "Profile"
+                        contentDescription = "Profile",
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
-                val context = LocalContext.current
-                val session = SessionManager(context)
-                // ✅ Logout Icon
                 IconButton(onClick = {
                     session.logout()
-
                     navController.navigate("login") {
                         popUpTo("home") { inclusive = true }
                     }
-
                 }) {
                     Icon(
                         imageVector = Icons.Default.ExitToApp,
-                        contentDescription = "Logout"
+                        contentDescription = "Logout",
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        // ✅ ACCOUNTS CARD
-        Card(
+        // ✅ Grid يملأ باقي الشاشة
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    navController.navigate("list")
-                },
-            colors = CardDefaults.cardColors(
-                containerColor = primaryBlue
-            ),
-            elevation = CardDefaults.cardElevation(6.dp)
+                .fillMaxSize()
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
+            // ✅ ROW 1
             Row(
-                modifier = Modifier.padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("📁", fontSize = 22.sp)
+                HomeCard(
+                    emoji = "📁",
+                    label = "Accounts",
+                    modifier = Modifier.weight(1f).fillMaxHeight()
+                ) { navController.navigate("list") }
 
-                Spacer(modifier = Modifier.width(12.dp))
+                HomeCard(
+                    emoji = "📊",
+                    label = "Dashboard",
+                    modifier = Modifier.weight(1f).fillMaxHeight()
+                ) { navController.navigate("dashboard") }
+            }
 
-                Text(
-                    text = "Accounts",
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleMedium
-                )
+            // ✅ ROW 2
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                HomeCard(
+                    emoji = "🔁",
+                    label = "Transfer",
+                    modifier = Modifier.weight(1f).fillMaxHeight()
+                ) { navController.navigate("transfer") }
+
+                HomeCard(
+                    emoji = "💳",
+                    label = "Payment",
+                    modifier = Modifier.weight(1f).fillMaxHeight()
+                ) { navController.navigate("payment") }
+            }
+
+            // ✅ ROW 3 — History في الوسط
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                HomeCard(
+                    emoji = "📜",
+                    label = "History",
+                    modifier = Modifier.fillMaxWidth(0.5f).fillMaxHeight()
+                ) { navController.navigate("history") }
             }
         }
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // ✅ DASHBOARD CARD
-        Card(
+@Composable
+fun HomeCard(
+    emoji: String,
+    label: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = modifier.clickable { onClick() },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(6.dp)
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    navController.navigate("dashboard")
-                },
-            colors = CardDefaults.cardColors(
-                containerColor = primaryBlue
-            ),
-            elevation = CardDefaults.cardElevation(6.dp)
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-
-            Row(
-                modifier = Modifier.padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("📊", fontSize = 22.sp)
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Text(
-                    text = "Dashboard",
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
+            Text(emoji, fontSize = 32.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = label,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleSmall
+            )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
 
-        // ✅ TRANSFER CARD
-        Card(
+@Composable
+fun ThemeToggleSwitch(
+    darkMode: Boolean,
+    onToggle: (Boolean) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .width(60.dp)
+            .height(30.dp)
+            .background(
+                color = if (darkMode) Color.DarkGray else Color.LightGray,
+                shape = RoundedCornerShape(50)
+            )
+            .clickable { onToggle(!darkMode) }
+            .padding(4.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(Icons.Default.LightMode, null, tint = Color.Yellow, modifier = Modifier.size(16.dp))
+            Icon(Icons.Default.DarkMode, null, tint = Color.White, modifier = Modifier.size(16.dp))
+        }
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    navController.navigate("transfer")
-                },
-            colors = CardDefaults.cardColors(
-                containerColor = primaryBlue
-            ),
-            elevation = CardDefaults.cardElevation(6.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("🔁", fontSize = 22.sp)
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Text(
-                    text = "Transfer",
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // ✅ PAYMENT CARD
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    navController.navigate("payment")
-                },
-            colors = CardDefaults.cardColors(
-                containerColor = primaryBlue
-            ),
-            elevation = CardDefaults.cardElevation(6.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("💳", fontSize = 22.sp)
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Text(
-                    text = "Payment",
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // ✅ HISTORY CARD
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    navController.navigate("history")
-                },
-            colors = CardDefaults.cardColors(
-                containerColor = primaryBlue
-            ),
-            elevation = CardDefaults.cardElevation(6.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("📜", fontSize = 22.sp)
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Text(
-                    text = "History",
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-        }
+                .size(22.dp)
+                .align(if (darkMode) Alignment.CenterEnd else Alignment.CenterStart)
+                .background(Color.White, CircleShape)
+        )
     }
 }

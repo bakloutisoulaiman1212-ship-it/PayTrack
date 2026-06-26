@@ -61,8 +61,7 @@ fun AccountListScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(background)
-    ) {
+            .background(MaterialTheme.colorScheme.background)    ) {
 
         Column(modifier = Modifier.padding(16.dp)) {
 
@@ -76,8 +75,7 @@ fun AccountListScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = primaryBlue // ✅ واضح
-                    )
+                        tint = MaterialTheme.colorScheme.onBackground                    )
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -85,8 +83,7 @@ fun AccountListScreen(
                 Text(
                     "Accounts",
                     style = MaterialTheme.typography.headlineMedium,
-                    color = Color.Black
-                )
+                    color = MaterialTheme.colorScheme.onBackground                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -102,8 +99,7 @@ fun AccountListScreen(
                             .clickable { onAccountClick(account) },
 
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
+                            containerColor = MaterialTheme.colorScheme.surface                        ),
 
                         elevation = CardDefaults.cardElevation(6.dp)
                     ) {
@@ -120,13 +116,12 @@ fun AccountListScreen(
                             Text(
                                 text = account.name,
                                 style = MaterialTheme.typography.titleMedium,
-                                color = Color.Black
-                            )
+                                color = MaterialTheme.colorScheme.onBackground                            )
 
                             // ✅ Balance
                             Text(
                                 text = "${account.balance} DT",
-                                color = primaryBlue,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
@@ -142,7 +137,7 @@ fun AccountListScreen(
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
 
-            containerColor = primaryBlue,
+            containerColor = MaterialTheme.colorScheme.primary ,
             contentColor = Color.White
         ) {
             Icon(Icons.Default.Add, contentDescription = "Add")

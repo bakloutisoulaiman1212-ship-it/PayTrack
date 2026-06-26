@@ -66,6 +66,7 @@ fun PaymentScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
 
@@ -87,8 +88,7 @@ fun PaymentScreen(
             Text(
                 text = "Payment",
                 style = MaterialTheme.typography.titleLarge,
-                color = Color.Black
-            )
+                color = MaterialTheme.colorScheme.onBackground            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -96,7 +96,7 @@ fun PaymentScreen(
         // ✅ CARD (FORM)
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(8.dp)
         ) {
 
@@ -120,8 +120,7 @@ fun PaymentScreen(
                     label = { Text("Amount") },
 
                     textStyle = TextStyle(
-                        color = Color.Black
-                    ),
+                        color = MaterialTheme.colorScheme.onBackground                    ),
 
                 modifier = Modifier.fillMaxWidth() ,
 
@@ -157,8 +156,7 @@ fun PaymentScreen(
                 .fillMaxWidth()
                 .height(55.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
-            ),
+                containerColor = MaterialTheme.colorScheme.primary            ),
             contentPadding = PaddingValues()
         ) {
 
@@ -178,7 +176,7 @@ fun PaymentScreen(
             ) {
                 Text(
                     text = "Pay",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.titleMedium
                 )
             }

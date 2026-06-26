@@ -55,7 +55,7 @@ fun AddAccountScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
 
@@ -71,8 +71,7 @@ fun AddAccountScreen(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = primaryBlue
-                )
+                    tint = MaterialTheme.colorScheme.onBackground                )
             }
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -80,8 +79,7 @@ fun AddAccountScreen(
             Text(
                 text = "Add Account",
                 style = MaterialTheme.typography.headlineMedium,
-                color = Color.Black
-            )
+                color = MaterialTheme.colorScheme.onBackground            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -90,8 +88,7 @@ fun AddAccountScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            ),
+                containerColor = MaterialTheme.colorScheme.surface            ),
             elevation = CardDefaults.cardElevation(6.dp)
         ) {
 
@@ -102,14 +99,6 @@ fun AddAccountScreen(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Account Name") },
-
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black,
-                        cursorColor = primaryBlue,
-                        focusedBorderColor = primaryBlue,
-                        unfocusedBorderColor = Color.Gray
-                    ),
 
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -125,15 +114,6 @@ fun AddAccountScreen(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),
-
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black,
-                        cursorColor = primaryBlue,
-                        focusedBorderColor = primaryBlue,
-                        unfocusedBorderColor = Color.Gray
-                    ),
-
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -153,8 +133,7 @@ fun AddAccountScreen(
                         .fillMaxWidth()
                         .height(50.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = primaryBlue
-                    )
+                        containerColor = MaterialTheme.colorScheme.primary                    )
                 ) {
                     Text("Add Account")
                 }

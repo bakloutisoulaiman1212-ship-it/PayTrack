@@ -7,6 +7,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialogDefaults.containerColor
+import androidx.compose.material3.AlertDialogDefaults.titleContentColor
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,7 +75,7 @@ fun DashboardScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
 
@@ -86,8 +88,7 @@ fun DashboardScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = primaryBlue
-                    )
+                        tint = MaterialTheme.colorScheme.onBackground                    )
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -95,8 +96,7 @@ fun DashboardScreen(
                 Text(
                     "Dashboard",
                     style = MaterialTheme.typography.headlineMedium,
-                    color = Color.Black
-                )
+                    color = MaterialTheme.colorScheme.onBackground                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -170,7 +170,7 @@ fun DashboardScreen(
                                 txn.type.contains("OUT") -> Color.Red
                                 txn.type.contains("IN") -> primaryBlue
                                 txn.type == "PAYMENT" -> Color(0xFF4CAF50)
-                                else -> Color.Black
+                                else -> MaterialTheme.colorScheme.onSurface
                             }
                         )
                     }
@@ -188,8 +188,7 @@ fun DashboardScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            ),
+                containerColor = MaterialTheme.colorScheme.surface            ),
             elevation = CardDefaults.cardElevation(6.dp)
         ) {
 
@@ -199,7 +198,7 @@ fun DashboardScreen(
 
                 Text(
                     text = title,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.bodyMedium
                 )
 
@@ -207,7 +206,7 @@ fun DashboardScreen(
 
                 Text(
                     text = value,
-                    color = color,
+                    color = color ,
                     style = MaterialTheme.typography.titleLarge
                 )
             }
@@ -227,8 +226,7 @@ fun DashboardScreen(
             Text(
                 text = "Accounts Overview",
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.Gray
-            )
+                color = MaterialTheme.colorScheme.onBackground            )
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -263,7 +261,7 @@ fun DashboardScreen(
 
                         Text(
                             text = account.name,
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.bodySmall,
                             maxLines = 1
                         )
@@ -279,8 +277,7 @@ fun DashboardScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            ),
+                containerColor = MaterialTheme.colorScheme.surface            ),
             elevation = CardDefaults.cardElevation(6.dp)
         ) {
 
@@ -318,7 +315,7 @@ fun TransactionsBarChart(transactions: List<Transaction>) {
         Text(
             text = "Spending Activity",
             style = MaterialTheme.typography.titleMedium,
-            color = Color.Gray
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -356,8 +353,7 @@ fun TransactionsBarChart(transactions: List<Transaction>) {
                     Text(
                         text = "${total.toInt()}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
+                        color = MaterialTheme.colorScheme.onBackground                    )
                 }
             }
         }
@@ -377,10 +373,10 @@ fun BudgetSection(viewModel: BudgetViewModel) {
     LaunchedEffect(Unit) { viewModel.loadData() }
 
     if (budget == null) {
-        // ── لا يوجد بودجة بعد ──
+
         NoBudgetCard { showDialog = true }
     } else {
-        // ── عرض البودجة ──
+
         BudgetCard(
             budget   = budget!!,
             spent    = spent,
@@ -403,12 +399,12 @@ fun BudgetSection(viewModel: BudgetViewModel) {
     }
 }
 
-// ── Card: لا توجد بودجة ──
+
 @Composable
 fun NoBudgetCard(onSetClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Column(
@@ -443,7 +439,7 @@ fun BudgetCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -456,10 +452,9 @@ fun BudgetCard(
                 Text(
                     "Monthly Budget",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.Gray
-                )
+                    color =  MaterialTheme.colorScheme.onSurface               )
                 TextButton(onClick = onEditClick) {
-                    Text("Edit", color = Color(0xFF3B82F6))
+                    Text("Edit", color = MaterialTheme.colorScheme.onSurface)
                 }
             }
 
@@ -469,8 +464,8 @@ fun BudgetCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                BudgetStat("Budget",    "${budget.monthlyLimit} DT", Color.Black)
-                BudgetStat("Spent",     "${String.format("%.2f", spent)} DT", Color.Red)
+                BudgetStat("Budget",    "${budget.monthlyLimit} DT", color = MaterialTheme.colorScheme.onSurface)
+                BudgetStat("Spent",     "${String.format("%.2f", spent)} DT",color = MaterialTheme.colorScheme.onSurface)
                 BudgetStat("Remaining", "${String.format("%.2f", remaining)} DT", statusColor)
             }
 
@@ -491,12 +486,12 @@ fun BudgetCard(
             ) {
                 Text(
                     "${status.emoji} ${status.label}",
-                    color = statusColor,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
                     "${(ratio * 100).toInt()}% used",
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -507,12 +502,11 @@ fun BudgetCard(
 @Composable
 fun BudgetStat(label: String, value: String, color: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-        Text(value, style = MaterialTheme.typography.bodyMedium, color = color)
+        Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        Text(value, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
     }
 }
 
-// ── Dialog ──
 @Composable
 fun BudgetDialog(
     currentLimit: Double?,
@@ -521,29 +515,47 @@ fun BudgetDialog(
 ) {
     var input by remember { mutableStateOf(currentLimit?.toString() ?: "") }
     val isEdit = currentLimit != null
+    val blue = Color(0xFF3B82F6)
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (isEdit) "Edit Budget" else "Set Monthly Budget") },
+        containerColor = Color.White,
+        titleContentColor = Color.Black,
+        title = {
+            Text("Edit Budget")
+        },
         text = {
             OutlinedTextField(
                 value = input,
                 onValueChange = { input = it },
-                label = { Text("Amount (DT)") },
+                label = { Text("Amount (DT)", color = MaterialTheme.colorScheme.onBackground) },
+                singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true
+                textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onBackground),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = blue,
+                    unfocusedBorderColor = blue,
+                    cursorColor = blue,
+                )
             )
         },
         confirmButton = {
-            Button(onClick = {
-                val amount = input.toDoubleOrNull()
-                if (amount != null && amount > 0) onConfirm(amount)
-            }) {
-                Text(if (isEdit) "Update" else "Set")
+            Button(
+                onClick = {
+                    val amount = input.toDoubleOrNull()
+                    if (amount != null && amount > 0) onConfirm(amount)
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = blue
+                )
+            ) {
+                Text(if (isEdit) "Update" else "Set", color = MaterialTheme.colorScheme.onBackground)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = blue)
+            }
         }
     )
 }

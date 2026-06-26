@@ -44,6 +44,7 @@ fun TransferScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
 
@@ -65,8 +66,7 @@ fun TransferScreen(
             Text(
                 text = "Transfer",
                 style = MaterialTheme.typography.titleLarge,
-                color = Color.Black
-            )
+                color = MaterialTheme.colorScheme.onBackground            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -74,7 +74,7 @@ fun TransferScreen(
         // ✅ CARD
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(8.dp)
         ) {
 
@@ -109,8 +109,7 @@ fun TransferScreen(
                     modifier = Modifier.fillMaxWidth() ,
 
                     textStyle = TextStyle(
-                        color = Color.Black
-                ),
+                        color = MaterialTheme.colorScheme.onBackground                ),
 
                 keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
@@ -143,8 +142,7 @@ fun TransferScreen(
                 .fillMaxWidth()
                 .height(55.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
-            ),
+                containerColor = MaterialTheme.colorScheme.primary            ),
             contentPadding = PaddingValues()
         ) {
 
@@ -164,7 +162,7 @@ fun TransferScreen(
             ) {
                 Text(
                     text = "Transfer",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground ,
                     style = MaterialTheme.typography.titleMedium
                 )
             }

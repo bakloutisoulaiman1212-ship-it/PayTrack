@@ -16,19 +16,26 @@ import com.example.paytrack.ui.screens.dashboard.DashboardScreen
 import com.example.paytrack.ui.viewmodel.AccountViewModel
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import com.example.paytrack.ui.screens.NotificationsScreen
 import com.example.paytrack.ui.viewmodel.UserViewModel
 import com.example.paytrack.ui.screens.ProfileScreen
 import com.example.paytrack.ui.screens.transaction.HistoryScreen
 import com.example.paytrack.ui.screens.transaction.PaymentScreen
 import com.example.paytrack.ui.screens.transaction.TransferScreen
 import com.example.paytrack.ui.viewmodel.BudgetViewModel
+import com.example.paytrack.ui.viewmodel.NotificationViewModel
 import com.example.paytrack.ui.viewmodel.TransactionViewModel
 @Composable
 fun AppNavGraph(
     accountViewModel: AccountViewModel,
     userViewModel: UserViewModel,
     budgetViewModel: BudgetViewModel,
-    transactionViewModel: TransactionViewModel ) {
+    transactionViewModel: TransactionViewModel ,
+    notificationViewModel: NotificationViewModel ,
+    darkMode: Boolean,
+    onToggleDarkMode: (Boolean) -> Unit
+
+) {
 
     val navController = rememberNavController()
 
@@ -76,10 +83,16 @@ fun AppNavGraph(
                 navController = navController,
                 userViewModel = userViewModel )
         }
+        composable("notifications") {
+            NotificationsScreen(notificationViewModel, navController)
+        }
 
         composable("home/{username}") { backStackEntry ->
             val username = backStackEntry.arguments?.getString("username") ?: ""
-            HomeScreen(navController, username)
+            HomeScreen(navController, username ,notificationViewModel ,
+                darkMode = darkMode,
+                onToggleDarkMode = onToggleDarkMode
+            )
         }
         // ✅ LIST
         composable("list") {

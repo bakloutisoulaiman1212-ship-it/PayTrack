@@ -2,66 +2,41 @@ package com.example.paytrack.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.paytrack.data.localuser.SessionManager
 import com.example.paytrack.ui.viewmodel.UserViewModel
 
 @Composable
-fun LoginScreen(navController: NavController
-                ,
-                userViewModel: UserViewModel
+fun LoginScreen(
+    navController: NavController,
+    userViewModel: UserViewModel
 ) {
-
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-
     var errorMessage by remember { mutableStateOf("") }
     var showSnackbar by remember { mutableStateOf(false) }
 
-    val primaryBlue = Color(0xFF3B82F6)
-    val background = Color(0xFFF8FAFC)
-
     val context = LocalContext.current
     val session = SessionManager(context)
+
+    val blue = MaterialTheme.colorScheme.primary
+    val onSurface = MaterialTheme.colorScheme.onSurface
+    val onBackground = MaterialTheme.colorScheme.onBackground
 
     LaunchedEffect(showSnackbar) {
         if (showSnackbar) {
@@ -69,21 +44,21 @@ fun LoginScreen(navController: NavController
             showSnackbar = false
         }
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         // ✅ ICON
         Icon(
             imageVector = Icons.Default.Lock,
             contentDescription = null,
             modifier = Modifier.size(60.dp),
-            tint = primaryBlue
+            tint = onBackground
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -92,7 +67,7 @@ fun LoginScreen(navController: NavController
         Text(
             text = "Login",
             style = MaterialTheme.typography.headlineMedium,
-            color = Color.Black
+            color = onBackground
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -100,7 +75,7 @@ fun LoginScreen(navController: NavController
         // ✅ CARD
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(6.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -110,20 +85,21 @@ fun LoginScreen(navController: NavController
                     value = username,
                     onValueChange = { username = it },
                     label = { Text("Username") },
-
                     leadingIcon = {
-                        Icon(Icons.Default.Person, null, tint = primaryBlue)
+                        Icon(Icons.Default.Person, null, tint = onSurface)
                     },
-
+                    modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black,
-                        cursorColor = primaryBlue,
-                        focusedBorderColor = primaryBlue,
-                        unfocusedBorderColor = Color.Gray
-                    ),
-
-                    modifier = Modifier.fillMaxWidth()
+                        focusedTextColor = onSurface,
+                        unfocusedTextColor = onSurface,
+                        cursorColor = blue,
+                        focusedBorderColor = blue,
+                        unfocusedBorderColor = onSurface.copy(alpha = 0.4f),
+                        focusedLabelColor = blue,
+                        unfocusedLabelColor = onSurface.copy(alpha = 0.6f),
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -133,38 +109,34 @@ fun LoginScreen(navController: NavController
                     value = password,
                     onValueChange = { password = it },
                     label = { Text("Password") },
-
                     visualTransformation =
                         if (passwordVisible) VisualTransformation.None
                         else PasswordVisualTransformation(),
-
                     leadingIcon = {
-                        Icon(Icons.Default.Lock, null, tint = primaryBlue)
+                        Icon(Icons.Default.Lock, null, tint = onSurface)
                     },
-
                     trailingIcon = {
-                        IconButton(onClick = {
-                            passwordVisible = !passwordVisible
-                        }) {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
                             Icon(
-                                if (passwordVisible)
-                                    Icons.Default.Visibility
-                                else
-                                    Icons.Default.VisibilityOff,
-                                contentDescription = null
+                                if (passwordVisible) Icons.Default.Visibility
+                                else Icons.Default.VisibilityOff,
+                                contentDescription = null,
+                                tint = onSurface
                             )
                         }
                     },
-
+                    modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black,
-                        cursorColor = primaryBlue,
-                        focusedBorderColor = primaryBlue,
-                        unfocusedBorderColor = Color.Gray
-                    ),
-
-                    modifier = Modifier.fillMaxWidth()
+                        focusedTextColor = onSurface,
+                        unfocusedTextColor = onSurface,
+                        cursorColor = blue,
+                        focusedBorderColor = blue,
+                        unfocusedBorderColor = onSurface.copy(alpha = 0.4f),
+                        focusedLabelColor = blue,
+                        unfocusedLabelColor = onSurface.copy(alpha = 0.6f),
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    )
                 )
             }
         }
@@ -174,52 +146,39 @@ fun LoginScreen(navController: NavController
         // ✅ BUTTON
         Button(
             onClick = {
-
                 if (username.isBlank() || password.isBlank()) {
                     errorMessage = "Fill all fields ⚠️"
                     showSnackbar = true
                 } else {
-
                     userViewModel.login(username, password) { success ->
-
                         if (success) {
-
                             session.saveLogin(username)
-
                             navController.navigate("home/$username") {
                                 popUpTo("login") { inclusive = true }
                             }
-
                         } else {
                             errorMessage = "Invalid credentials ⚠️"
                             showSnackbar = true
                         }
                     }
-            }
-                      },
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = primaryBlue
-            )
+            colors = ButtonDefaults.buttonColors(containerColor = blue)
         ) {
-            Text("Login")
+            Text("Login", color = MaterialTheme.colorScheme.onPrimary)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            "Don't have an account?",
-            color = Color.Gray
-        )
+        Text("Don't have an account?", color = onBackground)
 
         Text(
             "Sign Up",
-            color = primaryBlue,
-            modifier = Modifier.clickable {
-                navController.navigate("signup")
-            }
+            color = blue,
+            modifier = Modifier.clickable { navController.navigate("signup") }
         )
     }
 
@@ -227,9 +186,9 @@ fun LoginScreen(navController: NavController
     if (showSnackbar) {
         Snackbar(
             modifier = Modifier.padding(16.dp),
-            containerColor = Color.Black
+            containerColor = MaterialTheme.colorScheme.errorContainer
         ) {
-            Text(text = errorMessage, color = Color.White)
+            Text(text = errorMessage, color = MaterialTheme.colorScheme.onErrorContainer)
         }
     }
 }

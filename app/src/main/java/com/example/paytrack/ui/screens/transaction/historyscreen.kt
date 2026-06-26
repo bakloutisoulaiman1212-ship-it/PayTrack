@@ -1,5 +1,6 @@
 package com.example.paytrack.ui.screens.transaction
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -34,6 +36,7 @@ import androidx.navigation.NavController
 import com.example.paytrack.data.localuser.SessionManager
 import com.example.paytrack.ui.viewmodel.AccountViewModel
 import com.example.paytrack.ui.viewmodel.TransactionViewModel
+import com.example.paytrack.utils.PdfExporter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -65,6 +68,7 @@ fun HistoryScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
 
@@ -77,19 +81,38 @@ fun HistoryScreen(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = null,
-                    tint = Color(0xFF4A90E2)
-                )
+                    tint = MaterialTheme.colorScheme.onBackground                )
             }
 
             Text(
                 text = "Transactions History",
                 style = MaterialTheme.typography.titleLarge,
-                color = Color.Black
-            )
+                color = MaterialTheme.colorScheme.onBackground            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        Button(
+            onClick = {
+                PdfExporter.exportMonthlyTransactions(
+                    context = context,
+                    transactions = transactions,
+                    username = username
+                )
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF3B82F6)
+            )
+        ) {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = null,
+                tint = Color.White
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text("Export PDF", color = Color.White)
+        }
+        Spacer(modifier = Modifier.height(16.dp))
         // ✅ LIST (scrollable ✅)
         LazyColumn(
             modifier = Modifier.weight(1f)
@@ -102,12 +125,12 @@ fun HistoryScreen(
 
                 if (accountTransactions.isNotEmpty()) {
 
-                    // ✅ عنوان الحساب
+
                     item {
                         Text(
                             text = "${account.name} History",
                             style = MaterialTheme.typography.titleMedium,
-                            color = Color(0xFF4A90E2),
+                            color = MaterialTheme.colorScheme.onBackground ,
                             modifier = Modifier.padding(vertical = 10.dp)
                         )
                     }
@@ -120,8 +143,7 @@ fun HistoryScreen(
                                 .fillMaxWidth()
                                 .padding(vertical = 6.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = Color.White
-                            ),
+                                containerColor = MaterialTheme.colorScheme.surface                            ),
                             elevation = CardDefaults.cardElevation(4.dp)
                         ) {
 
@@ -137,8 +159,7 @@ fun HistoryScreen(
 
                                     Text(
                                         text = txn.type,
-                                        color = Color.Black
-                                    )
+                                        color = MaterialTheme.colorScheme.onSurface                                    )
 
                                     Text(
                                         text = "${txn.amount} DT",
@@ -146,34 +167,33 @@ fun HistoryScreen(
                                             txn.type.contains("OUT") -> Color.Red
                                             txn.type.contains("IN") -> Color(0xFF4A90E2)
                                             txn.type == "PAYMENT" -> Color(0xFF4CAF50)
-                                            txn.type == "VOID" -> Color.Gray
+                                            txn.type == "VOID" -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                                             else -> Color.Black
                                         }
                                     )
                                 }
 
                                 Spacer(modifier = Modifier.height(6.dp))
-
                                 // ✅ DETAILS
                                 when (txn.type) {
 
                                     "TRANSFER_OUT" -> {
-                                        Text("To: ${txn.toAccountName ?: "Unknown"}")
+                                        Text("To: ${txn.toAccountName ?: "Unknown"} ")
                                     }
 
                                     "TRANSFER_IN" -> {
-                                        Text("From: ${txn.fromAccountName ?: "Unknown"}")
+                                        Text("From: ${txn.fromAccountName ?: "Unknown"} ")
                                     }
 
                                     "PAYMENT" -> {
-                                        Text("Payment")
+                                        Text("Payment" ,
+                                            color = MaterialTheme.colorScheme.onBackground )
                                     }
 
                                     "VOID" -> {
                                         Text(
                                             "Transaction canceled",
-                                            color = Color.Gray
-                                        )
+                                            color = MaterialTheme.colorScheme.onBackground                                        )
                                     }
                                 }
 
@@ -187,12 +207,12 @@ fun HistoryScreen(
 
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.End // ✅ على اليمين
+                                        horizontalArrangement = Arrangement.End
                                     ) {
 
                                         Button(
                                             onClick = {
-                                                transactionViewModel.voidTransaction(txn)
+                                                transactionViewModel.voidTransaction(txn ,context)
                                             },
                                             colors = ButtonDefaults.buttonColors(
                                                 containerColor = Color.Red // ✅ bouton rouge
@@ -201,15 +221,13 @@ fun HistoryScreen(
 
                                             Text(
                                                 text = "↩️",
-                                                color = Color.White
-                                            )
+                                                color = MaterialTheme.colorScheme.onBackground                                            )
 
                                             Spacer(modifier = Modifier.width(4.dp))
 
                                             Text(
                                                 text = "Void",
-                                                color = Color.White // ✅ text blanc
-                                            )
+                                                color = Color.White)
                                         }
                                     }
                                 }
@@ -218,7 +236,7 @@ fun HistoryScreen(
                                 // ✅ DATE
                                 Text(
                                     text = formatDate(txn.date),
-                                    color = Color.Gray,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }

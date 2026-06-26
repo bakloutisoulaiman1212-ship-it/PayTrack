@@ -62,7 +62,7 @@ fun EditAccountScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(background)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
 
@@ -76,8 +76,7 @@ fun EditAccountScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = primaryBlue
-                    )
+                        tint = MaterialTheme.colorScheme.onBackground                    )
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -85,8 +84,7 @@ fun EditAccountScreen(
                 Text(
                     text = "Edit Account",
                     style = MaterialTheme.typography.headlineMedium,
-                    color = Color.Black
-                )
+                    color = MaterialTheme.colorScheme.onBackground                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -94,7 +92,7 @@ fun EditAccountScreen(
             // ✅ CARD
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(6.dp)
             ) {
 
@@ -105,16 +103,27 @@ fun EditAccountScreen(
                         value = name,
                         onValueChange = { name = it },
                         label = { Text("Account Name") },
-
+                        modifier = Modifier.fillMaxWidth() ,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black,
-                            cursorColor = primaryBlue,
-                            focusedBorderColor = primaryBlue,
-                            unfocusedBorderColor = Color.Gray
-                        ),
+                            // ✅ Text
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
 
-                        modifier = Modifier.fillMaxWidth()
+                            // ✅ Border
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+
+                            // ✅ Label
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+
+                            // ✅ Cursor
+                            cursorColor = MaterialTheme.colorScheme.primary,
+
+                            // ✅ Background
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        )
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -124,19 +133,29 @@ fun EditAccountScreen(
                         value = balance,
                         onValueChange = { balance = it },
                         label = { Text("Balance") },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            // ✅ Text
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
 
+                            // ✅ Border
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+
+                            // ✅ Label
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+
+                            // ✅ Cursor
+                            cursorColor = MaterialTheme.colorScheme.primary,
+
+                            // ✅ Background
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal
                         ),
-
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black,
-                            cursorColor = primaryBlue,
-                            focusedBorderColor = primaryBlue,
-                            unfocusedBorderColor = Color.Gray
-                        ),
-
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -158,15 +177,14 @@ fun EditAccountScreen(
                             .fillMaxWidth()
                             .height(50.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = primaryBlue
-                        )
+                            containerColor = MaterialTheme.colorScheme.primary                        )
                     ) {
                         Text("Update")
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // ✅ DELETE BUTTON (🔥 RED واضح)
+                    // ✅ DELETE BUTTON
                     Button(
                         onClick = { showDialog = true },
                         modifier = Modifier
@@ -186,19 +204,17 @@ fun EditAccountScreen(
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
+                containerColor = MaterialTheme.colorScheme.surface ,
+                titleContentColor = MaterialTheme.colorScheme.onBackground,
 
                 title = {
-                    Text(
-                        text = "Delete Account?",
-                        color = Color.Black
-                    )
+                    Text("Delete Account?")
                 },
 
                 text = {
                     Text(
                         text = "Are you sure you want to delete this account? This action cannot be undone.",
-                        color = Color.Gray
-                    )
+                        color = MaterialTheme.colorScheme.onBackground                    )
                 },
 
                 confirmButton = {
@@ -208,19 +224,18 @@ fun EditAccountScreen(
                             showDialog = false
                             navController.popBackStack()
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = dangerRed
-                        )
+                        colors = ButtonDefaults.buttonColors(containerColor = dangerRed)
                     ) {
-                        Text("Delete")
+                        Text("Delete", color = MaterialTheme.colorScheme.onBackground)
                     }
                 },
 
                 dismissButton = {
                     OutlinedButton(
-                        onClick = { showDialog = false }
+                        onClick = { showDialog = false },
+                        colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text("Cancel")
+                        Text("Cancel" , color = MaterialTheme.colorScheme.onBackground)
                     }
                 }
             )

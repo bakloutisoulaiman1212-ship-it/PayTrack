@@ -85,7 +85,7 @@ fun ProfileScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF8FAFC)) // ✅ background عادي
+                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
                 .padding(padding)
         ) {
@@ -101,8 +101,7 @@ fun ProfileScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back" ,
-                        tint = Color(0xFF4A90E2)
-
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -111,8 +110,7 @@ fun ProfileScreen(
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "User",
-                    tint = Color(0xFF000000)
-
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
 
                 Spacer(Modifier.width(6.dp))
@@ -120,8 +118,7 @@ fun ProfileScreen(
                 Text(
                     text = username,
                     style = MaterialTheme.typography.titleMedium ,
-                    color = Color.Black
-                )
+                    color = MaterialTheme.colorScheme.onBackground                )
             }
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -132,8 +129,7 @@ fun ProfileScreen(
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(6.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White // ✅ card عادي (موش dark)
-                )
+                    containerColor = MaterialTheme.colorScheme.surface                )
             ) {
 
                 Column(
@@ -255,8 +251,7 @@ fun ProfileScreen(
                     .fillMaxWidth()
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent
-                ),
+                    containerColor = MaterialTheme.colorScheme.primary                ),
                 contentPadding = PaddingValues()
             ) {
 
@@ -276,8 +271,7 @@ fun ProfileScreen(
                 ) {
                     Text(
                         text = "Change Password",
-                        color = Color.White
-                    )
+                        color = MaterialTheme.colorScheme.onBackground                    )
                 }
             }
         }
